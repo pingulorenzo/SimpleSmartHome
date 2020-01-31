@@ -51,8 +51,9 @@ CPU mySystem {
  CPU_DATA =
 		CORTEX_MX {
 			MODEL = M4;
-			APP_SRC = "code.c"; //COMPILER_TYPE = KEIL; 
- COMPILER_TYPE = GNU;
+			APP_SRC = "code.c";
+			APP_SRC = "gui.c";
+ 			COMPILER_TYPE = GNU;
 			MULTI_STACK = FALSE;
 		};
 		EE_OPT = "__USE_SYSTICK__";
