@@ -10,13 +10,13 @@
 #define RECT2_X           RECT1_X
 #define RECT2_Y           RECT1_Y + 48
 
-#define HEIGHT_RECT2		HEIGHT_RECT1 + 100
+#define HEIGHT_RECT2		HEIGHT_RECT1 - 10
 #define WIDTH_RECT2			WIDTH_RECT1
 
 #define RECT3_X           RECT2_X
 #define RECT3_Y           RECT2_Y + 48
 
-#define HEIGHT_RECT3		HEIGHT_RECT2
+#define HEIGHT_RECT3		HEIGHT_RECT1 + 100
 #define WIDTH_RECT3			WIDTH_RECT2
 
 #define RECT4_X           RECT3_X
@@ -31,20 +31,26 @@
 #define HEIGHT_RECT5		100
 #define WIDTH_RECT5			WIDTH_RECT4
 
-#define ASCI1MIN			49
-#define ASCI1MAX			51
+#define ASCII1MIN			49
+#define ASCII1MAX			51
 
-#define ASCI2MIN			53
-#define ASCI2MAX			48
+#define ASCII2MIN			53
+#define ASCII2MAX			48
 
-#define ASCI1DEFAULT		50
-#define ASCI2DEFAULT		51
+#define ASCIIU1MIN			49
+#define ASCIIU1MAX			57
+
+#define ASCII1DEFAULT		50
+#define ASCII2DEFAULT		51
+#define ASCIIU1DEFAULT		53
+#define ASCIIU2DEFAULT		48
 
 #define NROOMS				5
 
 extern volatile int count;
 extern volatile int countControl;
 extern volatile int countTemp;
+extern volatile int countUmid;
 extern volatile int countLuci;
 extern volatile int color;
 extern volatile int countColor;
@@ -76,12 +82,20 @@ void selectLuciControl();
 void displayHeadingControl();
 int selectBackButtonControl();
 int selectBackButtonLuci();
-int backButtonDisplayTemp();
-void selectPlusButton();
+int selectBackButtonTemp();
+int selectBackButtonUmid();
+void initialUmidDisplay();
 void initialTempDisplay();
-void displayDesiredTemp(int asci1, int asci2);
-void selectMinusButton();
-void selectAccendi(int *on, int *off);
-void selectSpegni(int *on, int *off);
-void displayOnOff(int on, int off);
+void displayDesiredTemp(int, int);
+void displayDesiredUmid(int, int);
+void displayCurrentTemp(int, int);
+void displayCurrentUmid(int, int);
+void selectMinusTemp();
+void selectPlusTemp();
+void selectMinusUmid();
+void selectPlusUmid();
+void selectAccendi(int*, int*, int*);
+void selectSpegni(int*, int*, int*);
+void selectAuto(int*, int*, int*);
+void displayOnOff(int, int, int);
 void initialSettingsLuci();

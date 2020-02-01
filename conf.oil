@@ -45,11 +45,8 @@
  */
 CPU mySystem {
 	OS myOs {
-		EE_OPT = "DEBUG"; /*Uncomment the following EE_OPTs when using KEIL*/
-		//EE_OPT = "__KEIL_USE_AXF_EXT__";
- //EE_OPT = "__MICROLIB";
- CPU_DATA =
-		CORTEX_MX {
+		EE_OPT = "DEBUG";
+ 		CPU_DATA = CORTEX_MX {
 			MODEL = M4;
 			APP_SRC = "code.c";
 			APP_SRC = "gui.c";
@@ -64,15 +61,17 @@ CPU mySystem {
 		LIB = ENABLE {
 			NAME = "ST_CMSIS";
 		};
-		LIB = ENABLE {
-			NAME = "STM32F4XX_SPD";
+		LIB = ENABLE {	NAME = "STM32F4XX_SPD"; 
+			STM32F4XX_SPD = ENABLE {
+                		USEUSART = TRUE;
+            		};
 		};
 		LIB = ENABLE {
 			NAME = "STM32F4_DISCOVERY";
 			STM32F4_DISCOVERY = ENABLE {
 				USELEDS = TRUE;
+				USECOM = TRUE;
 				USELCD = TRUE;
-				USELCDLOG = TRUE;
 			};
 		};
 		STATUS = EXTENDED;
@@ -105,24 +104,32 @@ CPU mySystem {
 			TASK = TaskPress;
 		};
 	};
+	ALARM AlarmSensors {
+		COUNTER = myCounter;
+		ACTION = ACTIVATETASK {
+			TASK = TaskSensors;
+		};
+	};
 
 
 
 	TASK TaskOUT {
-		//PRIORITY = 2; /* High priority */ AUTOSTART = FALSE;
 		PRIORITY = 4;
 		STACK = SHARED;
 		ACTIVATION = 1; /* only one pending activation */ SCHEDULE = FULL;
 	};
 	TASK TaskButton {
-		//PRIORITY = 0x01;
 		PRIORITY = 2;
 		STACK = SHARED;
 		SCHEDULE = FULL;
 	};
 	TASK TaskPress {
-		//PRIORITY = 3;
 		PRIORITY = 3;
+		STACK = SHARED;
+		SCHEDULE = FULL;
+	};
+	TASK TaskSensors {
+		PRIORITY = 1;
 		STACK = SHARED;
 		SCHEDULE = FULL;
 	};
