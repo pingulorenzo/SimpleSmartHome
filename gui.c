@@ -305,24 +305,24 @@ void initialUmidDisplay() {
 	LCD_DisplayStringLine(LINE(5), "ATTUALE");
 }
 
-void displayDesiredTemp(int asci1, int asci2) {
-	LCD_DisplayChar(LINE(3), 215, asci1);
-	LCD_DisplayChar(LINE(3), 230, asci2);
+void displayDesiredTemp(char ascii1, char ascii2) {
+	LCD_DisplayChar(LINE(3), 215, ascii1);
+	LCD_DisplayChar(LINE(3), 230, ascii2);
 }
 
-void displayDesiredUmid(int asci1, int asci2) {
-	LCD_DisplayChar(LINE(3), 215, asci1);
-	LCD_DisplayChar(LINE(3), 230, asci2);
+void displayDesiredUmid(char ascii1, char ascii2) {
+	LCD_DisplayChar(LINE(3), 215, ascii1);
+	LCD_DisplayChar(LINE(3), 230, ascii2);
 }
 
-void displayCurrentTemp(int asci1, int asci2) {
-	LCD_DisplayChar(LINE(5), 215, asci1);
-	LCD_DisplayChar(LINE(5), 230, asci2);
+void displayCurrentTemp(char ascii1, char ascii2) {
+	LCD_DisplayChar(LINE(5), 215, ascii1);
+	LCD_DisplayChar(LINE(5), 230, ascii2);
 }
 
-void displayCurrentUmid(int asci1, int asci2) {
-	LCD_DisplayChar(LINE(5), 215, asci1);
-	LCD_DisplayChar(LINE(5), 230, asci2);
+void displayCurrentUmid(char ascii1, char ascii2) {
+	LCD_DisplayChar(LINE(5), 215, ascii1);
+	LCD_DisplayChar(LINE(5), 230, ascii2);
 }
 
 void selectMinusTemp() {

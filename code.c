@@ -1,31 +1,32 @@
 #include "gui.h"
 #include "code.h"
 
-int asciiFirst;
-int asciiSecond;
-int asciiChars[4][NROOMS] = 		{{ASCII1DEFAULT, ASCII1DEFAULT, ASCII1DEFAULT, ASCII1DEFAULT, ASCII1DEFAULT},
+char asciiFirst;
+char asciiSecond;
+char asciiChars[4][NROOMS] = 		{{ASCII1DEFAULT, ASCII1DEFAULT, ASCII1DEFAULT, ASCII1DEFAULT, ASCII1DEFAULT},
 									{ASCII2DEFAULT, ASCII2DEFAULT, ASCII2DEFAULT, ASCII2DEFAULT, ASCII2DEFAULT},
 									{ASCIIU1DEFAULT, ASCIIU1DEFAULT, ASCIIU1DEFAULT, ASCIIU1DEFAULT, ASCIIU1DEFAULT},
 									{ASCIIU2DEFAULT, ASCIIU2DEFAULT, ASCIIU2DEFAULT, ASCIIU2DEFAULT, ASCIIU2DEFAULT}};
-int asciiCurrentChars[4][NROOMS] = 	{{0, 0, 0, 0, 0},
-									{0, 0, 0, 0, 0},
-									{0, 0, 0, 0, 0},
-									{0, 0, 0, 0, 0}};
+char asciiCurrentChars[4][NROOMS] = 	{{'z', 'z', 'z', 'z', 'z'},
+									{'z', 'z', 'z', 'z', 'z'},
+									{'z', 'z', 'z', 'z', 'z'},
+									{'z', 'z', 'z', 'z', 'z'}};
 
-int onRoom[5] = { 0, 0, 0, 0, 0 };
-int offRoom[5] = { 0, 0, 0, 0, 0 };
-int autRoom[5] = { 0, 0, 0, 0, 0 };
+int onRoom[5] = { 1, 0, 0, 0, 0 };
+int offRoom[5] = { 1, 0, 0, 0, 0 };
+int autRoom[5] = { 1, 0, 0, 0, 0 };
 int on = 0;
 int off = 0;
 int aut = 0;
 
-int currentTemp, currentUmid, currentLuce;
+uint16_t current_temp, current_luce;
+uint8_t current_temp_D, current_temp_U, current_umid, current_umid_D, current_umid_U;
+float floatTemp;
 
+GPIO_InitTypeDef GPIO_InitStructure;
 USART_InitTypeDef USART_InitStructure;
 
-/*
- * SysTick ISR2
- */
+/* SysTick ISR2 */
 ISR2( systick_handler) {
 	/* count the interrupts, waking up expired alarms */
 	CounterTick(myCounter);
@@ -87,7 +88,7 @@ void taskControl() {
 	}
 }
 
-void initAsciiTemp(int asciiChars[][5], int *asciiFirst, int *asciiSecond) {
+void initAsciiTemp(char asciiChars[][5], char *asciiFirst, char *asciiSecond) {
 	if (rooms[0] == 1) {
 		*asciiFirst = asciiChars[0][0];
 		*asciiSecond = asciiChars[1][0];
@@ -106,7 +107,7 @@ void initAsciiTemp(int asciiChars[][5], int *asciiFirst, int *asciiSecond) {
 	}
 }
 
-void initAsciiUmid(int asciiChars[][5], int *asciiFirst, int *asciiSecond) {
+void initAsciiUmid(char asciiChars[][5], char *asciiFirst, char *asciiSecond) {
 	if (rooms[0] == 1) {
 		*asciiFirst = asciiChars[2][0];
 		*asciiSecond = asciiChars[3][0];
@@ -125,7 +126,7 @@ void initAsciiUmid(int asciiChars[][5], int *asciiFirst, int *asciiSecond) {
 	}
 }
 
-void modifyTempRooms(int asciiChars[][5], int asciiFirst, int asciiSecond) {
+void modifyTempRooms(char asciiChars[][5], char asciiFirst, char asciiSecond) {
 	if (rooms[0] == 1) {
 		asciiChars[0][0] = asciiFirst;
 		asciiChars[1][0] = asciiSecond;
@@ -154,7 +155,7 @@ void modifyTempRooms(int asciiChars[][5], int asciiFirst, int asciiSecond) {
 	}
 }
 
-void modifyUmidRooms(int asciiChars[][5], int asciiFirst, int asciiSecond) {
+void modifyUmidRooms(char asciiChars[][5], char asciiFirst, char asciiSecond) {
 	if (rooms[0] == 1) {
 		asciiChars[2][0] = asciiFirst;
 		asciiChars[3][0] = asciiSecond;
@@ -245,9 +246,9 @@ void taskLuci() {
 				}
 				break;
 			}
-			OnOffRooms(on, off, aut, onRoom, offRoom, autRoom);
 		}
 	}
+	OnOffRooms(on, off, aut, onRoom, offRoom, autRoom);
 }
 
 void taskUmid() {
@@ -276,7 +277,7 @@ void taskUmid() {
 	}
 }
 
-void regulateTemp(int *stopIncrease, int *stopDecrease, int countAscii, int *ascii1, int *ascii2) {
+void regulateTemp(int *stopIncrease, int *stopDecrease, int countAscii, char *ascii1, char *ascii2) {
 	if (color && !countTemp && countAscii == 5) {
 		if (((*ascii1) == ASCII1MIN) && ((*ascii2) == ASCII2MIN)) {
 			*stopDecrease = 1;
@@ -300,7 +301,7 @@ void regulateTemp(int *stopIncrease, int *stopDecrease, int countAscii, int *asc
 	}
 }
 
-void regulateUmid(int *stopIncrease, int *stopDecrease, int countAscii, int *ascii1, int *ascii2) {
+void regulateUmid(int *stopIncrease, int *stopDecrease, int countAscii, char *ascii1, char *ascii2) {
 	if (color && !countUmid && countAscii == 5) {
 		if ((*ascii1) == ASCIIU1MIN) {
 			*stopDecrease = 1;
@@ -384,28 +385,21 @@ TASK (TaskOUT) {
 			LCD_Clear(White);
 		}
 		switch (count) {
-		case 0: {
+		case 0:
 			selectSoggiorno();
 			break;
-		}
-		case 1: {
+		case 1:
 			selectCam1();
 			break;
-		}
-		case 2: {
+		case 2:
 			selectCam2();
 			break;
-
-		}
-		case 3: {
+		case 3:
 			selectSalaPranzo();
 			break;
-
-		}
-		case 4: {
+		case 4:
 			selectCucina();
 			break;
-		}
 		}
 
 	}
@@ -480,44 +474,205 @@ TASK (TaskPress) {
 }
 
 TASK (TaskSensors) {
-	uint8_t value[5];
+	uint8_t value[6];
 
-	USART_SendData(EVAL_COM1, 0xFF);
+	USART_SendData(USART3, 'z');
 
-	while (USART_GetFlagStatus(EVAL_COM1, USART_FLAG_RXNE) == RESET);
-    value[0] = USART_ReceiveData(EVAL_COM1);
-    value[1] = USART_ReceiveData(EVAL_COM1);
-    value[2] = USART_ReceiveData(EVAL_COM1);
-    value[3] = USART_ReceiveData(EVAL_COM1);
-    value[4] = USART_ReceiveData(EVAL_COM1);
+	while(!USART_GetFlagStatus(USART3, USART_FLAG_RXNE));
+	value[0] = USART_ReceiveData(USART3);
 
-    currentTemp = value[0] << 8 | value[1];
-    currentLuce = value[2];
-    currentUmid = value[3];
+	while(!USART_GetFlagStatus(USART3, USART_FLAG_RXNE));
+	value[1] = USART_ReceiveData(USART3);
 
-    /* Gestione comando BLUETOOTH TODO */
+	while(!USART_GetFlagStatus(USART3, USART_FLAG_RXNE));
+	value[2] = USART_ReceiveData(USART3);
 
-    switch(value[4]){
-    case 1:
-    	break;
-    case 2:
-    	break;
-    case 3:
-    	break;
-    case 4:
-    	break;
-    case 5:
-    	break;
-    case 6:
-    	break;
-    default:
-    	break;
+	while(!USART_GetFlagStatus(USART3, USART_FLAG_RXNE));
+	value[3] = USART_ReceiveData(USART3);
+
+	while(!USART_GetFlagStatus(USART3, USART_FLAG_RXNE));
+	value[4] = USART_ReceiveData(USART3);
+
+	while(!USART_GetFlagStatus(USART3, USART_FLAG_RXNE));
+	value[5] = USART_ReceiveData(USART3);
+
+	/* Temp Rebuilt */
+    current_temp = value[0] << 8 | value[1];
+    floatTemp = current_temp / 100;
+    if (current_temp % 100 > 49){
+        current_temp /= 100 + 1;
+    } else {
+        current_temp /= 100;
     }
+
+    /* Temp Char Casting */
+    current_temp_U = current_temp % 10 + '0';
+    current_temp_D = (current_temp % 100) / 10 + '0';
+    for (int i = 0; i < NROOMS; i++){
+    	asciiCurrentChars[0][i] = current_temp_D;
+    	asciiCurrentChars[1][i] = current_temp_U;
+    }
+
+    /* Luce Rebuilt */
+    current_luce = value[2] << 8 | value[3];
+
+    /* Umid Rebult and Casting*/
+    current_umid = value[4];
+    current_umid_U = (current_umid % 10) + '0';
+    current_umid_D = (current_umid % 100) / 10 + '0';
+    for (int i = 0; i < NROOMS; i++){
+    	asciiCurrentChars[2][i] = current_umid_D;
+    	asciiCurrentChars[3][i] = current_umid_U;
+    }
+
+    /* Gestione comando BLUETOOTH */
+    uint8_t bt_high, bt_low, bt;
+    bt = value[5];
+    bt_high = bt >> 4;
+	bt_low = bt & 0x0F;
+    if (bt != 0xFF){
+    	switch(bt_high){
+		case 0x01:
+			asciiChars[0][0] = ((bt_low + 15) % 100) / 10 + '0';
+			asciiChars[1][0] = (bt_low + 15) % 10 + '0';
+			break;
+		case 0x02:
+			asciiChars[2][4] = bt_low + '0';
+			asciiChars[3][4] = 0 + '0';
+			break;
+		case 0x03:
+			switch(bt_low){
+			case 0x01:
+				onRoom[0] = 1;
+				offRoom[0] = 0;
+				autRoom[0] = 0;
+				break;
+			case 0x02:
+				onRoom[0] = 0;
+				offRoom[0] = 1;
+				autRoom[0] = 0;
+				break;
+			case 0x03:
+				onRoom[0] = 0;
+				offRoom[0] = 0;
+				autRoom[0] = 1;
+				break;
+			}
+			break;
+		case 0x04:
+			asciiChars[0][1] = ((bt_low + 15) % 100) / 10 + '0';
+			asciiChars[1][1] = (bt_low + 15) % 10 + '0';
+			break;
+		case 0x05:
+			asciiChars[2][4] = bt_low + '0';
+			asciiChars[3][4] = 0 + '0';
+			break;
+		case 0x06:
+			switch(bt_low){
+			case 0x01:
+				onRoom[1] = 1;
+				offRoom[1] = 0;
+				autRoom[1] = 0;
+				break;
+			case 0x02:
+				onRoom[1] = 0;
+				offRoom[1] = 1;
+				autRoom[1] = 0;
+				break;
+			case 0x03:
+				onRoom[1] = 0;
+				offRoom[1] = 0;
+				autRoom[1] = 1;
+				break;
+			}
+			break;
+		case 0x07:
+			asciiChars[0][2] = ((bt_low + 15) % 100) / 10 + '0';
+			asciiChars[1][2] = (bt_low + 15) % 10 + '0';
+			break;
+		case 0x08:
+			asciiChars[2][4] = bt_low + '0';
+			asciiChars[3][4] = 0 + '0';
+			break;
+		case 0x09:
+			switch(bt_low){
+			case 0x01:
+				onRoom[2] = 1;
+				offRoom[2] = 0;
+				autRoom[2] = 0;
+				break;
+			case 0x02:
+				onRoom[2] = 0;
+				offRoom[2] = 1;
+				autRoom[2] = 0;
+				break;
+			case 0x03:
+				onRoom[2] = 0;
+				offRoom[2] = 0;
+				autRoom[2] = 1;
+				break;
+			}
+			break;
+		case 0x0A:
+			asciiChars[0][3] = ((bt_low + 15) % 100) / 10 + '0';
+			asciiChars[1][3] = (bt_low + 15) % 10 + '0';
+			break;
+		case 0x0B:
+			asciiChars[2][4] = bt_low + '0';
+			asciiChars[3][4] = 0 + '0';
+			break;
+		case 0x0C:
+			switch(bt_low){
+			case 0x01:
+				onRoom[3] = 1;
+				offRoom[3] = 0;
+				autRoom[3] = 0;
+				break;
+			case 0x02:
+				onRoom[3] = 0;
+				offRoom[3] = 1;
+				autRoom[3] = 0;
+				break;
+			case 0x03:
+				onRoom[3] = 0;
+				offRoom[3] = 0;
+				autRoom[3] = 1;
+				break;
+			}
+			break;
+		case 0x0D:
+			asciiChars[0][4] = ((bt_low + 15) % 100) / 10 + '0';
+			asciiChars[1][4] = (bt_low + 15) % 10 + '0';
+			break;
+		case 0x0E:
+			asciiChars[2][4] = bt_low + '0';
+			asciiChars[3][4] = 0 + '0';
+			break;
+		case 0x0F:
+			switch(bt_low){
+			case 0x01:
+				onRoom[4] = 1;
+				offRoom[4] = 0;
+				autRoom[4] = 0;
+				break;
+			case 0x02:
+				onRoom[4] = 0;
+				offRoom[4] = 1;
+				autRoom[4] = 0;
+				break;
+			case 0x03:
+				onRoom[4] = 0;
+				offRoom[4] = 0;
+				autRoom[4] = 1;
+				break;
+			}
+			break;
+		}
+    }
+
 }
 
 int main(void) {
-	GPIO_InitTypeDef GPIO_InitStructure;
-
 	SystemInit();
 
 	/*Initialize Erika related stuffs*/
@@ -533,29 +688,35 @@ int main(void) {
 	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IN;
 	GPIO_Init(GPIOA, &GPIO_InitStructure);
 
-	/*Initialize the LCD*/
+	/* Initialize the LCD */
 	STM32f4_Discovery_LCD_Init();
 
 	LCD_Clear(White);
 	LCD_SetBackColor(Green);
 	LCD_SetTextColor(Black);
 
-	/* USARTx configured as follow:
-		- BaudRate = 115200 baud
-		- Word Length = 8 Bits
-		- One Stop Bit
-		- No parity
-		- Hardware flow control disabled (RTS and CTS signals)
-		- Receive and transmit enabled
-	*/
-	USART_InitStructure.USART_BaudRate = 115200;
+	/* Initialize USART3 GPIO */
+	RCC_AHB1PeriphClockCmd(RCC_AHB1Periph_GPIOC, ENABLE); //Enable clock for GPIOB
+	GPIO_PinAFConfig(GPIOC, GPIO_PinSource10, GPIO_AF_USART3); //Connect PC10 to USART3_Tx
+	GPIO_PinAFConfig(GPIOC, GPIO_PinSource11, GPIO_AF_USART3); //Connect PC11 to USART3_Rx
+	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_10 | GPIO_Pin_11;
+	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AF; //GPIO_Mode_Alternate Function
+	GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
+	GPIO_InitStructure.GPIO_OType = GPIO_OType_PP;
+	GPIO_InitStructure.GPIO_PuPd = GPIO_PuPd_UP;
+	GPIO_Init(GPIOC, &GPIO_InitStructure);
+
+	/* Initialize USART3 */
+	RCC_APB1PeriphClockCmd(RCC_APB1Periph_USART3, ENABLE);
+	USART_InitStructure.USART_BaudRate = 9600;
 	USART_InitStructure.USART_WordLength = USART_WordLength_8b;
 	USART_InitStructure.USART_StopBits = USART_StopBits_1;
 	USART_InitStructure.USART_Parity = USART_Parity_No;
-	USART_InitStructure.USART_HardwareFlowControl = USART_HardwareFlowControl_None;
+	USART_InitStructure.USART_HardwareFlowControl =	USART_HardwareFlowControl_None;
 	USART_InitStructure.USART_Mode = USART_Mode_Rx | USART_Mode_Tx;
 
-	STM_EVAL_COMInit(COM1, &USART_InitStructure);
+	USART_Init(USART3, &USART_InitStructure);
+	USART_Cmd(USART3, ENABLE);
 
 	/* Program cyclic alarms which will fire after an initial offset,
 	 * and after that periodically
@@ -563,7 +724,7 @@ int main(void) {
 	SetRelAlarm(AlarmButton, 10, 20);
 	SetRelAlarm(AlarmOUT, 10, 200);
 	SetRelAlarm(AlarmPress, 10, 750);
-	//SetRelAlarm(AlarmSensors, 10, 1000);
+	SetRelAlarm(AlarmSensors, 10, 1000);
 
 	/* Forever loop: background activities (if any) should go here */
 	for (;;){
