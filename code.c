@@ -24,7 +24,7 @@ int off = 0;
 int aut = 0;
 
 uint16_t current_temp, current_luce;
-uint8_t current_temp_D, current_temp_U, current_umid, current_umid_D, current_umid_U;
+uint8_t current_temp_D, current_temp_U, current_umid, current_umid_D, current_umid_U, flag_luce;
 float floatTemp;
 
 GPIO_InitTypeDef GPIO_InitStructure;
@@ -684,9 +684,32 @@ TASK (TaskControl) {
     	desiredRoomUmid[i] = ((int)asciiChars[2][i] - '0') * 10 + ((int)asciiChars[3][i] - '0');
     }
 
-	GPIO_SetBits(GPIOA, GPIO_Pin_8); // Luci | Trigger = 0x999
-	GPIO_SetBits(GPIOA, GPIO_Pin_9); // Umid
-	GPIO_SetBits(GPIOA, GPIO_Pin_10); // Temp
+    /* ONLY FOR ROOM 1 */
+	if (onRoom[0]) {
+		GPIO_SetBits(GPIOA, GPIO_Pin_8); // Luci
+	} else if (offRoom[0]) {
+		GPIO_ResetBits(GPIOA, GPIO_Pin_8); // Luci
+	} else if (autRoom[0]) {
+		if (!flag_luce && current_luce > 0x999){
+			flag_luce = 1;
+			GPIO_SetBits(GPIOA, GPIO_Pin_8); // Luci
+		} else if (flag_luce && current_luce < 0x888) {
+			flag_luce = 0;
+			GPIO_ResetBits(GPIOA, GPIO_Pin_8); // Luci
+		}
+	}
+
+	if (actualRoomTemp[0] < desiredRoomTemp[0]) {
+		GPIO_SetBits(GPIOA, GPIO_Pin_10); // Temp
+	} else {
+		GPIO_ResetBits(GPIOA, GPIO_Pin_10); // Temp
+	}
+
+	if (actualRoomUmid[0] > desiredRoomUmid[0]) {
+		GPIO_SetBits(GPIOA, GPIO_Pin_9); // Umid
+	} else {
+		GPIO_ResetBits(GPIOA, GPIO_Pin_9); // Umid
+	}
 }
 
 int main(void) {
