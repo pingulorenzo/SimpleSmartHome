@@ -11,10 +11,14 @@ char asciiCurrentChars[4][NROOMS] = 	{{'z', 'z', 'z', 'z', 'z'},
 									{'z', 'z', 'z', 'z', 'z'},
 									{'z', 'z', 'z', 'z', 'z'},
 									{'z', 'z', 'z', 'z', 'z'}};
+int actualRoomTemp[NROOMS];
+int actualRoomUmid[NROOMS];
+int desiredRoomTemp[NROOMS];
+int desiredRoomUmid[NROOMS];
 
-int onRoom[5] = { 1, 0, 0, 0, 0 };
-int offRoom[5] = { 1, 0, 0, 0, 0 };
-int autRoom[5] = { 1, 0, 0, 0, 0 };
+int onRoom[5] = { 0, 0, 0, 0, 0 };
+int offRoom[5] = { 0, 0, 0, 0, 0 };
+int autRoom[5] = { 0, 0, 0, 0, 0 };
 int on = 0;
 int off = 0;
 int aut = 0;
@@ -27,7 +31,7 @@ GPIO_InitTypeDef GPIO_InitStructure;
 USART_InitTypeDef USART_InitStructure;
 
 /* SysTick ISR2 */
-ISR2( systick_handler) {
+ISR2 (systick_handler) {
 	/* count the interrupts, waking up expired alarms */
 	CounterTick(myCounter);
 }
@@ -537,8 +541,8 @@ TASK (TaskSensors) {
 			asciiChars[1][0] = (bt_low + 15) % 10 + '0';
 			break;
 		case 0x02:
-			asciiChars[2][4] = bt_low + '0';
-			asciiChars[3][4] = 0 + '0';
+			asciiChars[2][0] = bt_low + '0';
+			asciiChars[3][0] = 0 + '0';
 			break;
 		case 0x03:
 			switch(bt_low){
@@ -564,8 +568,8 @@ TASK (TaskSensors) {
 			asciiChars[1][1] = (bt_low + 15) % 10 + '0';
 			break;
 		case 0x05:
-			asciiChars[2][4] = bt_low + '0';
-			asciiChars[3][4] = 0 + '0';
+			asciiChars[2][1] = bt_low + '0';
+			asciiChars[3][1] = 0 + '0';
 			break;
 		case 0x06:
 			switch(bt_low){
@@ -591,8 +595,8 @@ TASK (TaskSensors) {
 			asciiChars[1][2] = (bt_low + 15) % 10 + '0';
 			break;
 		case 0x08:
-			asciiChars[2][4] = bt_low + '0';
-			asciiChars[3][4] = 0 + '0';
+			asciiChars[2][2] = bt_low + '0';
+			asciiChars[3][2] = 0 + '0';
 			break;
 		case 0x09:
 			switch(bt_low){
@@ -618,8 +622,8 @@ TASK (TaskSensors) {
 			asciiChars[1][3] = (bt_low + 15) % 10 + '0';
 			break;
 		case 0x0B:
-			asciiChars[2][4] = bt_low + '0';
-			asciiChars[3][4] = 0 + '0';
+			asciiChars[2][3] = bt_low + '0';
+			asciiChars[3][3] = 0 + '0';
 			break;
 		case 0x0C:
 			switch(bt_low){
@@ -672,6 +676,19 @@ TASK (TaskSensors) {
 
 }
 
+TASK (TaskControl) {
+    for (int i = 0; i < NROOMS; i++){
+    	actualRoomTemp[i] = ((int)asciiCurrentChars[0][i] - '0') * 10 + ((int)asciiCurrentChars[1][i] - '0');
+    	actualRoomUmid[i] = ((int)asciiCurrentChars[2][i] - '0') * 10 + ((int)asciiCurrentChars[3][i] - '0');
+    	desiredRoomTemp[i] = ((int)asciiChars[0][i] - '0') * 10 + ((int)asciiChars[1][i] - '0');
+    	desiredRoomUmid[i] = ((int)asciiChars[2][i] - '0') * 10 + ((int)asciiChars[3][i] - '0');
+    }
+
+	GPIO_SetBits(GPIOA, GPIO_Pin_8); // Luci | Trigger = 0x999
+	GPIO_SetBits(GPIOA, GPIO_Pin_9); // Umid
+	GPIO_SetBits(GPIOA, GPIO_Pin_10); // Temp
+}
+
 int main(void) {
 	SystemInit();
 
@@ -694,6 +711,11 @@ int main(void) {
 	LCD_Clear(White);
 	LCD_SetBackColor(Green);
 	LCD_SetTextColor(Black);
+
+	/* Initialize OutPut Leds */
+	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_8 | GPIO_Pin_9 | GPIO_Pin_10;
+	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_OUT;
+	GPIO_Init(GPIOA, &GPIO_InitStructure);
 
 	/* Initialize USART3 GPIO */
 	RCC_AHB1PeriphClockCmd(RCC_AHB1Periph_GPIOC, ENABLE); //Enable clock for GPIOB
@@ -721,10 +743,11 @@ int main(void) {
 	/* Program cyclic alarms which will fire after an initial offset,
 	 * and after that periodically
 	 * */
-	SetRelAlarm(AlarmButton, 10, 20);
+	SetRelAlarm(AlarmButton, 10, 5);
 	SetRelAlarm(AlarmOUT, 10, 200);
 	SetRelAlarm(AlarmPress, 10, 750);
 	SetRelAlarm(AlarmSensors, 10, 1000);
+	SetRelAlarm(AlarmControl, 10, 1000);
 
 	/* Forever loop: background activities (if any) should go here */
 	for (;;){

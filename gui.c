@@ -178,10 +178,10 @@ void selectTempControl() {
 	LCD_SetBackColor(White);
 	LCD_DisplayStringLine(LINE(7), "UMIDITA");
 	LCD_DisplayStringLine(LINE(5), "LUCI");
-	LCD_DisplayChar(LINE(9), 250, 66);
-	LCD_DisplayChar(LINE(9), 265, 65);
-	LCD_DisplayChar(LINE(9), 280, 67);
-	LCD_DisplayChar(LINE(9), 295, 75);
+	LCD_DisplayChar(LINE(9), 250, 'B');
+	LCD_DisplayChar(LINE(9), 265, 'A');
+	LCD_DisplayChar(LINE(9), 280, 'C');
+	LCD_DisplayChar(LINE(9), 295, 'K');
 }
 
 void selectUmidControl() {
@@ -199,10 +199,10 @@ void selectUmidControl() {
 	LCD_DisplayStringLine(LINE(7), "UMIDITA");
 	LCD_SetBackColor(White);
 	LCD_DisplayStringLine(LINE(5), "LUCI");
-	LCD_DisplayChar(LINE(9), 250, 66);
-	LCD_DisplayChar(LINE(9), 265, 65);
-	LCD_DisplayChar(LINE(9), 280, 67);
-	LCD_DisplayChar(LINE(9), 295, 75);
+	LCD_DisplayChar(LINE(9), 250, 'B');
+	LCD_DisplayChar(LINE(9), 265, 'A');
+	LCD_DisplayChar(LINE(9), 280, 'C');
+	LCD_DisplayChar(LINE(9), 295, 'K');
 }
 
 void selectLuciControl() {
@@ -220,10 +220,10 @@ void selectLuciControl() {
 	}
 	LCD_DisplayStringLine(LINE(5), "LUCI");
 	LCD_SetBackColor(White);
-	LCD_DisplayChar(LINE(9), 250, 66);
-	LCD_DisplayChar(LINE(9), 265, 65);
-	LCD_DisplayChar(LINE(9), 280, 67);
-	LCD_DisplayChar(LINE(9), 295, 75);
+	LCD_DisplayChar(LINE(9), 250, 'B');
+	LCD_DisplayChar(LINE(9), 265, 'A');
+	LCD_DisplayChar(LINE(9), 280, 'C');
+	LCD_DisplayChar(LINE(9), 295, 'K');
 }
 
 int selectBackButtonControl() {
@@ -240,10 +240,10 @@ int selectBackButtonControl() {
 	} else {
 		LCD_SetBackColor(Green);
 	}
-	LCD_DisplayChar(LINE(9), 250, 66);
-	LCD_DisplayChar(LINE(9), 265, 65);
-	LCD_DisplayChar(LINE(9), 280, 67);
-	LCD_DisplayChar(LINE(9), 295, 75);
+	LCD_DisplayChar(LINE(9), 250, 'B');
+	LCD_DisplayChar(LINE(9), 265, 'A');
+	LCD_DisplayChar(LINE(9), 280, 'C');
+	LCD_DisplayChar(LINE(9), 295, 'K');
 	return 0;
 }
 
@@ -253,10 +253,10 @@ int selectBackButtonTemp() {
 	} else {
 		LCD_SetBackColor(White);
 	}
-	LCD_DisplayChar(LINE(9), 250, 66);
-	LCD_DisplayChar(LINE(9), 265, 65);
-	LCD_DisplayChar(LINE(9), 280, 67);
-	LCD_DisplayChar(LINE(9), 295, 75);
+	LCD_DisplayChar(LINE(9), 250, 'B');
+	LCD_DisplayChar(LINE(9), 265, 'A');
+	LCD_DisplayChar(LINE(9), 280, 'C');
+	LCD_DisplayChar(LINE(9), 295, 'K');
 	if ((countTemp == 2) && (color)) {
 		stopTaskTemp = 1;
 		stopTaskControl = 0;
@@ -272,10 +272,10 @@ int selectBackButtonUmid() {
 	} else {
 		LCD_SetBackColor(White);
 	}
-	LCD_DisplayChar(LINE(9), 250, 66);
-	LCD_DisplayChar(LINE(9), 265, 65);
-	LCD_DisplayChar(LINE(9), 280, 67);
-	LCD_DisplayChar(LINE(9), 295, 75);
+	LCD_DisplayChar(LINE(9), 250, 'B');
+	LCD_DisplayChar(LINE(9), 265, 'A');
+	LCD_DisplayChar(LINE(9), 280, 'C');
+	LCD_DisplayChar(LINE(9), 295, 'K');
 	if ((countUmid == 2) && (color)) {
 		stopTaskUmid = 1;
 		stopTaskControl = 0;
@@ -377,10 +377,10 @@ void selectAccendi(int *on, int *off, int *aut) {
 	LCD_SetBackColor(White);
 	LCD_DisplayStringLine(LINE(5), "SPEGNI");
 	LCD_DisplayStringLine(LINE(7), "AUTO");
-	LCD_DisplayChar(LINE(9), 250, 66);
-	LCD_DisplayChar(LINE(9), 265, 65);
-	LCD_DisplayChar(LINE(9), 280, 67);
-	LCD_DisplayChar(LINE(9), 295, 75);
+	LCD_DisplayChar(LINE(9), 250, 'B');
+	LCD_DisplayChar(LINE(9), 265, 'A');
+	LCD_DisplayChar(LINE(9), 280, 'C');
+	LCD_DisplayChar(LINE(9), 295, 'K');
 }
 
 void selectSpegni(int *on, int *off, int *aut) {
@@ -399,10 +399,10 @@ void selectSpegni(int *on, int *off, int *aut) {
 	LCD_SetBackColor(White);
 	LCD_DisplayStringLine(LINE(7), "AUTO");
 
-	LCD_DisplayChar(LINE(9), 250, 66);
-	LCD_DisplayChar(LINE(9), 265, 65);
-	LCD_DisplayChar(LINE(9), 280, 67);
-	LCD_DisplayChar(LINE(9), 295, 75);
+	LCD_DisplayChar(LINE(9), 250, 'B');
+	LCD_DisplayChar(LINE(9), 265, 'A');
+	LCD_DisplayChar(LINE(9), 280, 'C');
+	LCD_DisplayChar(LINE(9), 295, 'K');
 }
 
 void selectAuto(int *on, int *off, int *aut) {
@@ -420,10 +420,10 @@ void selectAuto(int *on, int *off, int *aut) {
 		LCD_DisplayStringLine(LINE(7), "AUTO");
 	}
 	LCD_SetBackColor(White);
-	LCD_DisplayChar(LINE(9), 250, 66);
-	LCD_DisplayChar(LINE(9), 265, 65);
-	LCD_DisplayChar(LINE(9), 280, 67);
-	LCD_DisplayChar(LINE(9), 295, 75);
+	LCD_DisplayChar(LINE(9), 250, 'B');
+	LCD_DisplayChar(LINE(9), 265, 'A');
+	LCD_DisplayChar(LINE(9), 280, 'C');
+	LCD_DisplayChar(LINE(9), 295, 'K');
 }
 
 int selectBackButtonLuci() {
@@ -440,27 +440,27 @@ int selectBackButtonLuci() {
 	} else {
 		LCD_SetBackColor(Green);
 	}
-	LCD_DisplayChar(LINE(9), 250, 66);
-	LCD_DisplayChar(LINE(9), 265, 65);
-	LCD_DisplayChar(LINE(9), 280, 67);
-	LCD_DisplayChar(LINE(9), 295, 75);
+	LCD_DisplayChar(LINE(9), 250, 'B');
+	LCD_DisplayChar(LINE(9), 265, 'A');
+	LCD_DisplayChar(LINE(9), 280, 'C');
+	LCD_DisplayChar(LINE(9), 295, 'K');
 	return 0;
 }
 
 void displayOnOff(int on, int off, int aut) {
 	LCD_SetBackColor(White);
 	if ((off == 1) && (!on) && (!aut)) {
-		LCD_DisplayChar(LINE(5), 230, 79);
-		LCD_DisplayChar(LINE(5), 245, 70);
-		LCD_DisplayChar(LINE(5), 260, 70);
+		LCD_DisplayChar(LINE(5), 230, 'O');
+		LCD_DisplayChar(LINE(5), 245, 'F');
+		LCD_DisplayChar(LINE(5), 260, 'F');
 	}
 	if ((on == 1) && (!off) && (!aut)) {
-		LCD_DisplayChar(LINE(3), 230, 79);
-		LCD_DisplayChar(LINE(3), 245, 78);
+		LCD_DisplayChar(LINE(3), 230, 'O');
+		LCD_DisplayChar(LINE(3), 245, 'N');
 	}
 	if ((aut == 1) && (!off) && (!on)) {
-		LCD_DisplayChar(LINE(7), 230, 79);
-		LCD_DisplayChar(LINE(7), 245, 75);
+		LCD_DisplayChar(LINE(7), 230, 'O');
+		LCD_DisplayChar(LINE(7), 245, 'K');
 	}
 }
 

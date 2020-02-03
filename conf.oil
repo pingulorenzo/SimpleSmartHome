@@ -110,13 +110,19 @@ CPU mySystem {
 			TASK = TaskSensors;
 		};
 	};
+	ALARM AlarmControl {
+		COUNTER = myCounter;
+		ACTION = ACTIVATETASK {
+			TASK = TaskControl;
+		};
+	};
 
 
 
 	TASK TaskOUT {
 		PRIORITY = 4;
 		STACK = SHARED;
-		ACTIVATION = 1; /* only one pending activation */ SCHEDULE = FULL;
+		SCHEDULE = FULL;
 	};
 	TASK TaskButton {
 		PRIORITY = 2;
@@ -129,6 +135,11 @@ CPU mySystem {
 		SCHEDULE = FULL;
 	};
 	TASK TaskSensors {
+		PRIORITY = 1;
+		STACK = SHARED;
+		SCHEDULE = FULL;
+	};
+	TASK TaskControl{
 		PRIORITY = 1;
 		STACK = SHARED;
 		SCHEDULE = FULL;
