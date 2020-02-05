@@ -144,6 +144,16 @@ CPU mySystem {
 		STACK = SHARED;
 		SCHEDULE = FULL;
 	};
+	
+//	SCHEDULETABLE ScheduleTableButton {
+//	    COUNTER = myCounter;
+//	    DURATION = 500;
+//	    REPEATING = FALSE;
+//	    EXPIRE_POINT = ACTION {
+//	      EXPIRE_VALUE = 500;
+//	      ACTION = ACTIVATETASK { TASK = TaskButton; };
+//	    };
+//	 };
 
 	ISR systick_handler {
 		CATEGORY = 2;

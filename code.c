@@ -17,7 +17,7 @@ int desiredRoomTemp[NROOMS];
 int desiredRoomUmid[NROOMS];
 
 int onRoom[5] = { 0, 0, 0, 0, 0 };
-int offRoom[5] = { 0, 0, 0, 0, 0 };
+int offRoom[5] = { 1, 1, 1, 1, 1 };
 int autRoom[5] = { 0, 0, 0, 0, 0 };
 int on = 0;
 int off = 0;
@@ -25,7 +25,7 @@ int aut = 0;
 
 uint16_t current_temp, current_luce;
 uint8_t current_temp_D, current_temp_U, current_umid, current_umid_D, current_umid_U, flag_luce;
-float floatTemp;
+float float_temp;
 
 GPIO_InitTypeDef GPIO_InitStructure;
 USART_InitTypeDef USART_InitStructure;
@@ -502,7 +502,7 @@ TASK (TaskSensors) {
 
 	/* Temp Rebuilt */
     current_temp = value[0] << 8 | value[1];
-    floatTemp = current_temp / 100;
+    float_temp = current_temp / 100;
     if (current_temp % 100 > 49){
         current_temp /= 100 + 1;
     } else {
@@ -766,9 +766,9 @@ int main(void) {
 	/* Program cyclic alarms which will fire after an initial offset,
 	 * and after that periodically
 	 * */
-	SetRelAlarm(AlarmButton, 10, 5);
+	SetRelAlarm(AlarmButton, 10, 20);
 	SetRelAlarm(AlarmOUT, 10, 200);
-	SetRelAlarm(AlarmPress, 10, 750);
+	SetRelAlarm(AlarmPress, 10, 1000);
 	SetRelAlarm(AlarmSensors, 10, 1000);
 	SetRelAlarm(AlarmControl, 10, 1000);
 
