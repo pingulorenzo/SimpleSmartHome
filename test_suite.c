@@ -1,5 +1,5 @@
 #include <CUnit/CUnit.h>
-#include <CUnit/Automated.h>
+#include <CUnit/Basic.h>
 
 #define NROOMS 5
 
@@ -252,7 +252,7 @@ void TaskOUT() {
 			selectCam2();
 			break;
 		case 3:
-			selectSalaPranzo();
+			selectCucina();
 			break;
 		case 4:
 			selectCucina();
@@ -321,9 +321,9 @@ int main(int argc, char* argv[])
 
 
     // Running all the tests
-    CU_automated_run_tests();
+    CU_basic_run_tests();
 
     CU_cleanup_registry();
 
-    return EXIT_SUCCESS;
+    return CUE_SUCCESS;
 }
